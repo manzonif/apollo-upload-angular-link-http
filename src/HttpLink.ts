@@ -10,8 +10,9 @@ import {print} from 'graphql/language/printer';
 import {ExecutionResult} from 'graphql';
 import {Observable} from 'rxjs/Observable';
 
-import {Options, Request, Context} from './types';
+import {Options, Request, Context, RequestOperation} from './types';
 import {mergeHeaders, prioritize} from './utils';
+import extractFiles from 'extract-files';
 
 // XXX find a better name for it
 export class HttpLinkHandler extends ApolloLink {
@@ -38,26 +39,57 @@ export class HttpLinkHandler extends ApolloLink {
         const url = pick('uri', 'graphql');
         const withCredentials = pick('withCredentials');
 
+        const requestOperation: RequestOperation = { 
+          operationName: operation.operationName,
+          variables: operation.variables,       
+        };
+        if (includeExtensions) {
+          requestOperation.extensions = operation.extensions;
+        }
+
+        if (includeQuery) {
+          requestOperation.query = print(operation.query);
+        }
+
+        let body: any;
+        const files: any[] = extractFiles(operation.variables);
+        if (files.length) {
+          // GraphQL multipart request spec:
+          // https://github.com/jaydenseric/graphql-multipart-request-spec
+
+          body = new FormData();
+          body.append(
+            'operations',
+            JSON.stringify(requestOperation)
+          );
+
+          body.append(
+            'map',
+            JSON.stringify(
+              files.reduce((map, { path }, index) => {
+                map[`${index}`] = [path];
+                return map;
+              }, {})
+            )
+          );
+
+          files.forEach(({ file }, index) => {
+            body.append(index, file);
+          });
+
+        } else {
+          body = requestOperation;
+        }
+
         const req: Request = {
           method,
           url,
-          body: {
-            operationName: operation.operationName,
-            variables: operation.variables,
-          },
+          body: body,
           options: {
             withCredentials,
             headers: this.options.headers,
           },
         };
-
-        if (includeExtensions) {
-          req.body.extensions = operation.extensions;
-        }
-
-        if (includeQuery) {
-          req.body.query = print(operation.query);
-        }
 
         if (context.headers) {
           req.options.headers = mergeHeaders(

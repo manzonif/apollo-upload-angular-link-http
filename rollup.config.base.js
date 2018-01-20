@@ -11,7 +11,10 @@ export const globals = {
     'rxjs/observable/from': 'Rx.Observable',
     'rxjs/observable/fromPromise': 'Rx.Observable',
     'rxjs/scheduler/queue': 'Rx.Scheduler',
-    'rxjs/operator/observeOn': 'Rx.Observable.prototype'
+    'rxjs/operator/observeOn': 'Rx.Observable.prototype',
+    // Others
+    'graphql/language/printer': 'graphql.printer',
+    'extract-files': 'extract-files'
   };
   
   export default name => ({

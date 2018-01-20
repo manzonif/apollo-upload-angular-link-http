@@ -1,7 +1,6 @@
 {
   "name": "apollo-upload-angular-link-http",
-  "author":
-    "manzonif <manzoni.faust@gmail.com> (http://github.com/manzonif/)",
+  "author": "manzonif (http://github.com/manzonif/)",
   "license": "MIT",
   "main": "./build/bundle.umd.js",
   "module": "./build/src/index.js",
@@ -17,16 +16,16 @@
     "bundle": "rollup -c rollup.config.js",
     "test": "npm run test-only",
     "test-only": "jest --config jest.config.js",
-    "lint":
-      "tslint -c ../../tslint.json -p tsconfig.json --type-check {src,tests}/*.ts",
+    "lint": "tslint -c ../../tslint.json -p tsconfig.json --type-check {src,tests}/*.ts",
     "postbuild": "npm run bundle",
-    "deploy": "./scripts/deploy.sh"
+    "deploy": "./deploy.sh"
   },
   "peerDependencies": {
-    "@angular/core": "^4.3.0 || ^5.0.0-rc.0",
     "@angular/common": "^4.3.0 || ^5.0.0-rc.0",
+    "@angular/core": "^4.3.0 || ^5.0.0-rc.0",
     "apollo-link": "^1.0.0",
-    "graphql": "^0.11.2"
+    "graphql": "^0.11.2",
+    "extract-files": "^3.0.0"
   },
   "devDependencies": {
     "@angular/animations": "^4.4.4",

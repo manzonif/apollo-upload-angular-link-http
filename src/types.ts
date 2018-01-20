@@ -14,7 +14,7 @@ export type FetchOptions = {
 
 export type Options = {} & FetchOptions & HttpRequestOptions;
 
-export type Body = {
+export type RequestOperation = {
   query?: string;
   variables?: Record<string, any>;
   operationName?: string;
@@ -26,6 +26,7 @@ export type Context = {} & FetchOptions & HttpRequestOptions;
 export type Request = {
   method: string;
   url: string;
-  body: Body;
+  body: RequestOperation | FormData;
   options: HttpRequestOptions;
 };
+
