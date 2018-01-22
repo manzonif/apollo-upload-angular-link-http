@@ -52,7 +52,7 @@ export class HttpLinkHandler extends ApolloLink {
         }
 
         let body: any;
-        const files: any[] = extractFiles(operation.variables);
+        const files: any[] = extractFiles(operation);
         if (files.length) {
           // GraphQL multipart request spec:
           // https://github.com/jaydenseric/graphql-multipart-request-spec
