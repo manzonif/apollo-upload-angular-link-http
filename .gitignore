@@ -3,3 +3,4 @@
 /npm
 /coverage
 yarn.lock
+deploy.sh

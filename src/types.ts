@@ -1,18 +1,3 @@
-import {HttpHeaders} from '@angular/common/http';
-
-export type HttpRequestOptions = {
-  headers?: HttpHeaders;
-  withCredentials?: boolean;
-};
-
-export type FetchOptions = {
-  method?: string;
-  uri?: string;
-  includeExtensions?: boolean;
-  includeQuery?: boolean;
-};
-
-export type Options = {} & FetchOptions & HttpRequestOptions;
 
 export type RequestOperation = {
   query?: string;
@@ -21,12 +6,4 @@ export type RequestOperation = {
   extensions?: Record<string, any>;
 };
 
-export type Context = {} & FetchOptions & HttpRequestOptions;
-
-export type Request = {
-  method: string;
-  url: string;
-  body: RequestOperation | FormData;
-  options: HttpRequestOptions;
-};
 
