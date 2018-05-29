@@ -11,7 +11,6 @@ import {print} from 'graphql/language/printer';
 import {
   fetch,
   Options,
-  Body,
   Request,
   Context,
   mergeHeaders,
