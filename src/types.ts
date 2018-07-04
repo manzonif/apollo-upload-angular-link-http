@@ -1,3 +1,9 @@
+import {HttpHeaders} from '@angular/common/http';
+
+export type HttpRequestOptions = {
+  headers?: HttpHeaders;
+  withCredentials?: boolean;
+};
 
 export type RequestOperation = {
   query?: string;
@@ -7,3 +13,9 @@ export type RequestOperation = {
 };
 
 
+export type Request = {
+  method: string;
+  url: string;
+  body: Body | Body[];
+  options: HttpRequestOptions;
+};

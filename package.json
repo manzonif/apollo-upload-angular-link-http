@@ -6,7 +6,7 @@
   "module": "./build/src/index.js",
   "jsnext:main": "./build/src/index.js",
   "typings": "./build/src/index.d.ts",
-  "version": "1.2.35",
+  "version": "1.2.36",
   "repository": {
     "type": "git",
     "url": "manzonif/apollo-upload-angular-link-http"

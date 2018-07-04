@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpEvent, HttpEventType} from '@angular/common/http';
 import {
   ApolloLink,
   Observable as LinkObservable,
@@ -9,15 +9,15 @@ import {
 } from 'apollo-link';
 import {print} from 'graphql/language/printer';
 import {
-  fetch,
   Options,
-  Request,
   Context,
   mergeHeaders,
   prioritize,
 } from 'apollo-angular-link-http-common';
 
-import {RequestOperation} from './types';
+import { fetch } from './utils';
+
+import {RequestOperation, Request} from './types';
 import extractFiles from 'extract-files';
 
 // XXX find a better name for it
@@ -62,7 +62,6 @@ export class HttpLinkHandler extends ApolloLink {
         if (files.length) {
           // GraphQL multipart request spec:
           // https://github.com/jaydenseric/graphql-multipart-request-spec
-
           body = new FormData();
           body.append(
             'operations',
@@ -80,7 +79,9 @@ export class HttpLinkHandler extends ApolloLink {
           );
 
           files.forEach(({ file }, index) => {
-            body.append(index, file);
+            // support for file name for Blob, (filename must be added as parameter)
+            // https://developer.mozilla.org/en-US/docs/Web/API/FormData/append
+            body.append(index, file, file.name);
           });
 
         } else {
@@ -104,11 +105,27 @@ export class HttpLinkHandler extends ApolloLink {
           );
         }
 
-        const sub = fetch(req, this.httpClient).subscribe({
-          next: result => observer.next(result.body),
-          error: err => observer.error(err),
-          complete: () => observer.complete(),
-        });
+        const sub = fetch(req, this.httpClient).subscribe((event: HttpEvent<any>) =>{
+            if(event.type === HttpEventType.UploadProgress && files.length && context.onUploadProgress){
+              const progress = Math.round(100 * event.loaded / event.total);
+              context.onUploadProgress.next(progress);            
+            } else if (event.type === HttpEventType.Response) {
+              observer.next(event.body);
+              if(context.onUploadProgress){
+                context.onUploadProgress.complete();
+              }
+            }
+        },
+        (err:  any) => observer.error(err),
+        () => observer.complete()
+      );
+
+        // const sub = fetch(req, this.httpClient).subscribe({
+          
+        //   next: result => observer.next(result.body),
+        //   error: err => observer.error(err),
+        //   complete: () => observer.complete(),
+        // });
 
         return () => {
           if (!sub.closed) {
